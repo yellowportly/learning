@@ -1,0 +1,6 @@
+Upsert (Insert or update) data in collection
+- use find_by_one
+   - if not found, then add
+    - must have all props supplied
+   - if found, just apply supplied props
+

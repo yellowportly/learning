@@ -1,0 +1,40 @@
+version: "3.7"
+services:
+  # mqtt5 eclipse-mosquitto
+  mqtt5:
+    image: eclipse-mosquitto
+    container_name: mqtt5
+    ports:
+      - "18883:1883" #default mqtt port
+      - "19001:9001" #default mqtt port for websockets
+    volumes:
+      - ./config:/mosquitto/config:rw
+      - ./data:/mosquitto/data:rw
+      - ./log:/mosquitto/log:rw
+    restart: unless-stopped
+  mongo:
+    image: mongo:8.0
+    container_name: mongodb
+    restart: always
+    ports:
+      - "27017:27017" # Expose MongoDB on the default port
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root # Set the admin username
+      MONGO_INITDB_ROOT_PASSWORD: password # Set the admin password
+    volumes:
+      - mongo-data:/data/db # Persist MongoDB data
+      - mongo-config:/data/configdb # Persist MongoDB configuration
+
+# volumes for mapping data,config and log
+volumes:
+  config:
+  data:
+  log:
+  mongo-data:
+    driver: local
+  mongo-config:
+    driver: local
+
+networks:
+  default:
+    name: mqtt5-network
