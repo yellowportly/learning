@@ -35,5 +35,12 @@ Docker for managing containers
   - had to run `poetry remove bson`
   - had to run `poetry remove pydantic-mongo`
   - had to run `poetry add pydantic-mongo`
-  - resolved issue
+  - resolved issue 
+
+## Examples for mongo
+- switch to schema using `use example`
+- find all data from a specific collection in schema using `db.opportunities.find()`
+- remove all items `db.opportunities.deleteMany({})`
+- payload for a PUT request `{"opportunity_id":"127","url":"http://fred","title":"job","industry":"Hello","application_text":"Hire me please","status":"waiting"}`
+- calling misquitto_pub from docker exec session `mosquitto_pub -u user1 -P password1 -m '{"industry":"Hello", "opportunity_id":"127","url":"http://fred","title":"job","application_text":"Hire me","status":"waiting"}' -t "learning/topic/opportunity"`
 
