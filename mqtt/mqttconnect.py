@@ -25,11 +25,11 @@ def on_connect(client, userdata, flags, rc, properties):
 def on_message(client, userdata, msg):
     try:
         payload = msg.payload.decode()
-        ret_id = upsert_opportunity(payload)
+        operation_type, ret_id = upsert_opportunity(payload)
 
         data = json.loads(payload)
         print(f"Incoming 📩 {msg.topic}: {json.dumps(data, indent=2)}")
-        print(f"Data was upserted and id is {ret_id}")
+        print(f"Data was {operation_type} and id is {ret_id}")
     except json.JSONDecodeError:
         print(f"⚠️ Received non-JSON message on {msg.topic}: {msg.payload.decode()}")
 

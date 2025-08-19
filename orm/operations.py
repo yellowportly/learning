@@ -1,7 +1,8 @@
+from bson import ObjectId
 from pydantic import TypeAdapter
 from pymongo.results import UpdateResult
 
-from orm.classes import Opportunity, repo
+from orm.classes import Opportunity, opportunity_repo
 import json
 
 def upsert_opportunity(msg: str):
@@ -20,19 +21,37 @@ def upsert_opportunity(msg: str):
         # just update the values that were provided for keys
         found_opportunity.__dict__.update(json_msg)
 
-    ret = repo.save(found_opportunity)
+    upserted_opportunity = do_actual_upsert(found_opportunity)
 
     # Check if updated or added
-    if isinstance(ret, UpdateResult):
-        return found_opportunity.id
+    if isinstance(upserted_opportunity, UpdateResult):
+        return "Updated", found_opportunity.id
     else:
-        return ret.inserted_id
+        return "Insrted", upserted_opportunity.inserted_id
 
-def find_by_opportunity_id(opportunity_id: str):
-    ret = repo.find_one_by({"opportunity_id": opportunity_id})
-    print(f"Found in method: {ret}")
+def do_actual_upsert(found_opportunity: Opportunity):
+    ret = opportunity_repo.save(found_opportunity)
     return ret
 
+def do_update_from_object(request_opportunity: Opportunity):
+    updated = opportunity_repo.save(request_opportunity)
+    newly_found_opportunity = find_by_opportunity_id(opportunity_id=request_opportunity.opportunity_id)
+    return newly_found_opportunity
+
+async def find_by_opportunity_id_async(opportunity_id: str):
+    return find_by_opportunity_id(opportunity_id)
+
+def find_all_opportunities():
+    #opportunities = opportunity_repo.find_by({"opportunity_id": {"$gte": "1"}})
+    opportunities = opportunity_repo.get_collection().find()
+    return opportunities
+
+def find_by_opportunity_id(opportunity_id: str):
+    ret = opportunity_repo.find_one_by({"opportunity_id": opportunity_id})
+    print(f"Looking for: {opportunity_id} Found in method: {ret}")
+    return ret
+
+# Might be able to replace this with
 def validate_input(json_msg: str):
     set_of_keys_in_msg = set(json_msg.keys())
     set_of_keys_in_model = set(Opportunity.model_fields.keys())

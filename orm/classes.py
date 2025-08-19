@@ -11,9 +11,11 @@ class Opportunity(BaseModel):
    url: str
    title: str
    industry: str
-   application_text: str
+   application_text: Optional[str]
    status: str
 
+# class OpportunityQuery(BaseModel):
+#    opportunity_id: str
 
 # Create a repository
 class OpportunityRepository(AbstractRepository[Opportunity]):
@@ -23,5 +25,5 @@ class OpportunityRepository(AbstractRepository[Opportunity]):
 # Connect to database
 client = MongoClient("mongodb://localhost:27017", username = "root", password = "password")
 database = client["example"]
-repo = OpportunityRepository(database)
+opportunity_repo = OpportunityRepository(database)
 
