@@ -1,9 +1,10 @@
-from bson import ObjectId
+import json
+
 from pydantic import TypeAdapter
 from pymongo.results import UpdateResult
+from typing import List
 
-from orm.classes import Opportunity, opportunity_repo
-import json
+from orm.classes import Opportunity, opportunity_repo, OpportunityDataClass
 
 def upsert_opportunity(msg: str):
     json_msg = json.loads(msg)
@@ -21,7 +22,7 @@ def upsert_opportunity(msg: str):
         # just update the values that were provided for keys
         found_opportunity.__dict__.update(json_msg)
 
-    upserted_opportunity = do_actual_upsert(found_opportunity)
+    upserted_opportunity = opportunity_repo.save(found_opportunity)
 
     # Check if updated or added
     if isinstance(upserted_opportunity, UpdateResult):
@@ -29,24 +30,18 @@ def upsert_opportunity(msg: str):
     else:
         return "Insrted", upserted_opportunity.inserted_id
 
-def do_actual_upsert(found_opportunity: Opportunity):
-    ret = opportunity_repo.save(found_opportunity)
-    return ret
-
-def do_update_from_object(request_opportunity: Opportunity):
+def do_update_from_object(request_opportunity: OpportunityDataClass) -> OpportunityDataClass:
     updated = opportunity_repo.save(request_opportunity)
-    newly_found_opportunity = find_by_opportunity_id(opportunity_id=request_opportunity.opportunity_id)
-    return newly_found_opportunity
+    return find_by_opportunity_id(opportunity_id=request_opportunity.opportunity_id)
 
-async def find_by_opportunity_id_async(opportunity_id: str):
+async def find_by_opportunity_id_async(opportunity_id: str) -> OpportunityDataClass:
     return find_by_opportunity_id(opportunity_id)
 
-def find_all_opportunities():
-    #opportunities = opportunity_repo.find_by({"opportunity_id": {"$gte": "1"}})
+def find_all_opportunities() -> List[OpportunityDataClass]:
     opportunities = opportunity_repo.get_collection().find()
     return opportunities
 
-def find_by_opportunity_id(opportunity_id: str):
+def find_by_opportunity_id(opportunity_id: str) -> OpportunityDataClass:
     ret = opportunity_repo.find_one_by({"opportunity_id": opportunity_id})
     print(f"Looking for: {opportunity_id} Found in method: {ret}")
     return ret
