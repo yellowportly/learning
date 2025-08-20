@@ -8,9 +8,9 @@ services:
       - "18883:1883" #default mqtt port
       - "19001:9001" #default mqtt port for websockets
     volumes:
-      - ./config:/mosquitto/config:rw
-      - ./data:/mosquitto/data:rw
-      - ./log:/mosquitto/log:rw
+      - ./mqtt5/config:/mosquitto/config:rw
+      - ./mqtt5/data:/mosquitto/data:rw
+      - ./mqtt5/log:/mosquitto/log:rw
     restart: unless-stopped
   mongo:
     image: mongo:8.0
@@ -27,9 +27,9 @@ services:
 
 # volumes for mapping data,config and log
 volumes:
-  config:
-  data:
-  log:
+#  config:
+#  data:
+#  log:
   mongo-data:
     driver: local
   mongo-config:

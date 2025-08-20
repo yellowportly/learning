@@ -1,10 +1,21 @@
 from fastapi import FastAPI, Response
+from fastapi.middleware.cors import CORSMiddleware
 from typing import List
 
 from orm.operations import find_by_opportunity_id_async, do_update_from_object, find_all_opportunities
 from orm.classes import Opportunity, OpportunityDataClass
 
+
 app = FastAPI()
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # for dev, allow all origins
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/opportunity/{opportunity_id}", response_model=Opportunity)
 async def get_opportunity(opportunity_id: str):

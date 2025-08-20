@@ -31,6 +31,7 @@ def upsert_opportunity(msg: str):
         return "Insrted", upserted_opportunity.inserted_id
 
 def do_update_from_object(request_opportunity: OpportunityDataClass) -> OpportunityDataClass:
+    print(f"About to save: {request_opportunity}")
     updated = opportunity_repo.save(request_opportunity)
     return find_by_opportunity_id(opportunity_id=request_opportunity.opportunity_id)
 
