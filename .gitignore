@@ -4,3 +4,10 @@
 /server/mqtt5/data/
 /server/mqtt5/data/
 /backend/.venv/
+__pycache__/main.cpython-312.pyc
+backend/__pycache__/main.cpython-312.pyc
+backend/mqtt/__pycache__/mqttconnect.cpython-312.pyc
+backend/orm/__pycache__/classes.cpython-312.pyc
+backend/orm/__pycache__/operations.cpython-312.pyc
+frontend/opp-app/.vite/deps/_metadata.json
+server/mqtt5/data/mosquitto.db
