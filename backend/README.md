@@ -36,6 +36,7 @@ Docker for managing containers
   - had to run `poetry remove pydantic-mongo`
   - had to run `poetry add pydantic-mongo`
   - resolved issue 
+  - messed around with venv, so had to re-add uvicorn with `poetry add uvicorn[standard]`
 
 ## Examples for mongo
 - switch to schema using `use example`
@@ -44,3 +45,11 @@ Docker for managing containers
 - payload for a PUT request `{"opportunity_id":"127","url":"http://fred","title":"job","industry":"Hello","application_text":"Hire me please","status":"waiting"}`
 - calling misquitto_pub from docker exec session `mosquitto_pub -u user1 -P password1 -m '{"industry":"Hello", "opportunity_id":"127","url":"http://fred","title":"job","application_text":"Hire me","status":"waiting"}' -t "learning/topic/opportunity"`
 
+## Executing
+- switch to backend directpry
+- execute `poetry run uvicorn main:app`
+
+
+## Venv
+- used `poetry config virtualenvs.in-project true` to allow venvs to movepostery show -v
+- 
