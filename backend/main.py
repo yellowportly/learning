@@ -1,8 +1,11 @@
-from fastapi import FastAPI, Response
+from fastapi import FastAPI, Response, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from typing import List
 
-from orm.operations import find_by_opportunity_id_async, do_update_from_object, find_all_opportunities
+from starlette import status
+
+from orm.operations import find_by_opportunity_id_async, do_update_from_object, find_all_opportunities, \
+    delete_by_opportunity_id, do_put_or_post
 from orm.classes import Opportunity, OpportunityDataClass
 
 
@@ -17,9 +20,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get("/opportunity/{opportunity_id}", response_model=Opportunity)
-async def get_opportunity(opportunity_id: str):
+@app.get("/opportunity/{opportunity_id}", status_code = 200, response_model=Opportunity)
+async def get_opportunity(opportunity_id: str) -> Opportunity:
     opportunity_in_db = await find_by_opportunity_id_async(opportunity_id)
+
+    if opportunity_in_db is None:
+        raise HTTPException(status_code=404)
 
     # Copy matching fields into response object
     response_opportunity = Opportunity(**opportunity_in_db.__dict__)
@@ -31,23 +37,27 @@ async def get_all_opportunities():
     opps = find_all_opportunities()
     return opps
 
-
-@app.put("/opportunity", status_code=200)
-async def upsert_opportunity(request_opportunity: Opportunity, response: Response):
-    found_opportunity = await find_by_opportunity_id_async(request_opportunity.opportunity_id)
+@app.delete("/opportunity/{opportunity_id}", status_code = status.HTTP_200_OK)
+async def delete_opportunity(opportunity_id: str, response: Response):
+    found_opportunity = await find_by_opportunity_id_async(opportunity_id)
 
     if found_opportunity is None:
-        new_opportunity_for_insert = OpportunityDataClass(**request_opportunity.__dict__)
-        newly_found_opportunity = do_update_from_object(new_opportunity_for_insert)
-    else:
-        # opportunity_for_update = deepcopy(request_opportunity)
-        opportunity_ready_for_update = OpportunityDataClass(**found_opportunity.__dict__)
-        opportunity_to_update = opportunity_ready_for_update.model_copy(update=request_opportunity.__dict__, deep=True)
+        response.status_code = status.HTTP_404_NOT_FOUND
+        return
 
-        newly_found_opportunity = do_update_from_object(opportunity_to_update)
+    delete_by_opportunity_id(found_opportunity)
+    return
 
-        if newly_found_opportunity is None:
-            response.status_code = 404
-            return None
+
+@app.put("/opportunity", status_code=200)
+async def update_opportunity(request_opportunity: Opportunity):
+    newly_found_opportunity = await do_put_or_post(request_opportunity)
+
+    return newly_found_opportunity
+
+
+@app.post("/opportunity", status_code=200)
+async def insert_opportunity(request_opportunity: Opportunity):
+    newly_found_opportunity = await do_put_or_post(request_opportunity)
 
     return newly_found_opportunity
