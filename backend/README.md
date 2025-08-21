@@ -48,4 +48,8 @@ Docker for managing containers
 ## Executing
 - switch to backend directpry
 - execute `poetry run uvicorn main:app`
+
+
+## Venv
+- used `poetry config virtualenvs.in-project true` to allow venvs to movepostery show -v
 - 

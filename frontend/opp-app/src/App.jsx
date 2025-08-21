@@ -8,7 +8,7 @@ export default function App() {
   const [formData, setFormData] = useState(
       {
           opportunity_id: null,
-          title: "",
+          title: null,
           url: null,
           industry: null,
           status: null,
@@ -60,7 +60,7 @@ export default function App() {
     }
     setFormData({
         opportunity_id: null,
-          title: "",
+          title: null,
           url: null,
           industry: null,
           status: null,

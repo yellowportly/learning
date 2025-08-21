@@ -16,3 +16,6 @@ If you are developing a production application, we recommend using TypeScript wi
 ## Installation
 Had to install nvm using `curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash`
 Then upgraded to version `v24.6.0` of node and npm `v11.5.1` by running `nvm install node`
+
+## Running
+Switch to frontend dir and execute `npm run dev`
